@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Event;
+use App\Eventdetail;
+use Auth;
+class EventController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+        $cart = $request->mycart;
+        // dd($cart);
+        $date = $request->date;
+        $time = $request->time;
+        $username = $request->username;
+        $number = $request->number;
+        $useremail = $request->useremail;
+        $specialrequest = $request->speicalrequest;
+        $voucherno = uniqid();
+
+        $jsonData = json_decode($cart);
+        $cart = $jsonData->itemlist;
+
+        foreach ($cart as $value) 
+        {   
+            $event = Event::create([
+                'codeno' => $voucherno,
+                'package_id' => $value->id,
+                'user_id' => Auth::user()->id,
+                'date' => $date,
+                'time' => $time,
+                'amount' =>  $value->price,
+                'qty' =>$value->quantity,
+                'bookinguser'   => $username,
+                'bookingph' => $number,
+                'bookingemail'  => $useremail,
+                'specialrequest' => $specialrequest,
+                'status' => 0
+            ]);
+        }
+
+        Eventdetail::create([
+            'potential_cost' => '',
+            'amount_paid' => '',
+            'extra_paid' => '',
+            'voucherno' => $voucherno,
+            'status' => 0,
+         ]);
+
+       return response()->json(['success'=>'Data id successfully added']);
+        
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}
